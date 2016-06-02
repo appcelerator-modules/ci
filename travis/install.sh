@@ -40,17 +40,20 @@ done
 
 # Need to install jq to process the JSON
 brew update
-brew install jq # process JSON 
+brew install jq # process JSON
+# need to use node 4.4.4 for now
+#brew unlink node
+#brew install https://raw.github.com/Homebrew/homebrew-versions/master/node4-lts.rb
 
 sudo npm install -g titanium
 titanium login travisci@appcelerator.com travisci
 titanium sdk install latest --no-progress-bars
 
-# Android SDK seems to require newer version of SDK		
+# Android SDK seems to require newer version of SDK
 echo
-echo "Installing $TITANIUM_SDK_VERSION"		
+echo "Installing $TITANIUM_SDK_VERSION"
 echo
-titanium sdk install -d $TITANIUM_SDK_VERSION --no-progress-bars		
+titanium sdk install -d $TITANIUM_SDK_VERSION --no-progress-bars
 
 export TITANIUM_ROOT=`ti sdk list -o json | jq -r '.defaultInstallLocation'`
 export TITANIUM_SDK=`ti sdk list -o json | jq -r '.installed[.activeSDK]'`
@@ -95,9 +98,12 @@ if [ -d "$MODULE_ROOT/android/" ]; then
   echo "Installing and configuring Android SDK + Tools"
 
   # Install required Android components.
-  echo yes | android -s update sdk --no-ui --all --filter \
-    tools,platform-tools,extra-android-support,android-8,android-10,android-$TITANIUM_ANDROID_API,addon-google_apis-google-$TITANIUM_ANDROID_API
-    
+  echo yes | android -s update sdk --no-ui --all --filter android-$TITANIUM_ANDROID_API 
+  echo yes | android -s update sdk --no-ui --all --filter addon-google_apis-google-$TITANIUM_ANDROID_API
+  echo yes | android -s update sdk --no-ui --all --filter tools
+  echo yes | android -s update sdk --no-ui --all --filter platform-tools
+  echo yes | android -s update sdk --no-ui --all --filter build-tools-$TITANIUM_ANDROID_API.0.0
+  echo yes | android -s update sdk --no-ui --all --filter extra-android-support
   # NDK r8c
   echo
   echo "Checking existance of $MODULE_ROOT/android-ndk-r8c"
